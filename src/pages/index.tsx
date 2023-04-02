@@ -45,6 +45,7 @@ function CreatePostWizard() {
       <input
         placeholder="Type some emojis!"
         className="grow bg-transparent outline-none"
+        type="text"
         value={input}
         onChange={(event) => setInput(event.target.value)}
         disabled={isPosting}
@@ -96,10 +97,10 @@ const Home: NextPage = () => {
 
   return (
     <PageLayout>
-      <div className="border-b border-slate-400 p-4">
+      <div className="flex border-b border-slate-400 p-4">
         {isSignedIn && <CreatePostWizard />}
         {!isSignedIn && (
-          <div className="flex justify-start">
+          <div className="flex items-center justify-center">
             <SignInButton />
           </div>
         )}
