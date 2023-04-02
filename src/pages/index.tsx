@@ -99,7 +99,7 @@ const Home: NextPage = () => {
       <div className="border-b border-slate-400 p-4">
         {isSignedIn && <CreatePostWizard />}
         {!isSignedIn && (
-          <div className="flex justify-center">
+          <div className="flex justify-start">
             <SignInButton />
           </div>
         )}
