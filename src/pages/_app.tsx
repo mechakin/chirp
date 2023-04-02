@@ -1,5 +1,5 @@
 import { type AppType } from "next/app";
-
+import { dark } from "@clerk/themes";
 import { api } from "~/utils/api";
 import Head from "next/head";
 import "~/styles/globals.css";
@@ -8,7 +8,12 @@ import { Toaster } from "react-hot-toast";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
-    <ClerkProvider {...pageProps}>
+    <ClerkProvider
+      {...pageProps}
+      appearance={{
+        baseTheme: dark,
+      }}
+    >
       <Head>
         <title>Chirp</title>
         <meta name="description" content="Twitter but it's only emojis" />
