@@ -7,7 +7,7 @@
 /** @type {import("next").NextConfig} */
 const config = {
   images: {
-    domains: ["images.clerk.dev"],
+    domains: ["images.clerk.dev", "www.gravatar.com"],
   },
   reactStrictMode: true,
 
