@@ -26,8 +26,8 @@ export default function LoadingSpinner(props: { size?: number }) {
 
 export function LoadingPage() {
   return (
-    <div className="absolute top-0 right-0 flex h-screen w-screen items-center justify-center align-middle">
-      <LoadingSpinner size={60} />
+    <div className="flex justify-center pt-4">
+      <LoadingSpinner size={30} />
     </div>
   );
 }
