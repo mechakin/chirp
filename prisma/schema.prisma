@@ -11,11 +11,45 @@ datasource db {
     relationMode = "prisma"
 }
 
+model Like {
+    authorId String
+    postId   String
+    post     Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+    author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+    @@id([authorId, postId])
+    @@index([authorId])
+    @@index([postId])
+}
+
+// model Repost {
+//     authorId String
+//     postId   String
+//     post     Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+//     @@id([authorId, postId])
+//     @@index([authorId])
+//     @@index([postId])
+// }
+
 model Post {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
     content   String   @db.VarChar(255)
     authorId  String
+    author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+    likes     Like[]
+    // reposts   Repost[]
 
+    @@unique([createdAt, id])
     @@index([authorId])
+}
+
+model User {
+    id        String @id
+    bio       String @default("") @db.VarChar(1000)
+    followers User[] @relation(name: "Followers")
+    follows   User[] @relation(name: "Followers")
+    posts     Post[]
+    likes     Like[]
 }
