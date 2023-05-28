@@ -2,7 +2,7 @@ import Link from "next/link";
 import { type PropsWithChildren } from "react";
 import { useUser, useClerk, SignInButton, UserButton } from "@clerk/nextjs";
 import { VscAccount, VscHome, VscSignIn, VscSignOut } from "react-icons/vsc";
-import { IconHoverEffect } from "./iconHoverEffect";
+import { IconHoverEffect } from "./iconhovereffect";
 
 export function SideNav() {
   const { user } = useUser();

@@ -8,10 +8,11 @@ import { PostView } from "~/components/postview";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { useInView } from "react-intersection-observer";
 import Link from "next/link";
-import { IconHoverEffect } from "~/components/iconHoverEffect";
+import { IconHoverEffect } from "~/components/iconhovereffect";
 import { VscArrowLeft } from "react-icons/vsc";
 import { useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
+import { NotFound } from "~/components/notfound";
 
 const pluralRules = new Intl.PluralRules();
 function getPlural(number: number, singular: string, plural: string) {
@@ -60,7 +61,7 @@ function ProfileHeader(props: {
   };
 
   return (
-    <header className="sticky top-0 z-10 flex items-center border-b border-b-slate-400 bg-black p-2">
+    <header className="sticky top-0 z-10 flex items-center  bg-black p-2">
       <Link href=".." className="mr-2">
         <IconHoverEffect>
           <VscArrowLeft className="h-6 w-6" />
@@ -135,7 +136,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
     username,
   });
 
-  if (!data) return <div>404</div>;
+  if (!data) return <NotFound />;
 
   return (
     <>
