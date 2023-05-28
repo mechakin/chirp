@@ -106,7 +106,7 @@ function RecentFeed() {
       <span ref={ref} className={hasNextPage ? "invisible" : "hidden"}>
         intersection observer marker
       </span>
-      {isFetching && (
+      {postsLoading && (
         <div className="pb-2">
           <LoadingPage />
         </div>
@@ -148,7 +148,11 @@ function FollowingFeed() {
       <span ref={ref} className={hasNextPage ? "invisible" : "hidden"}>
         intersection observer marker
       </span>
-      {isFetching && <LoadingPage />}
+      {postsLoading && (
+        <div className="pb-2">
+          <LoadingPage />
+        </div>
+      )}
     </div>
   );
 }

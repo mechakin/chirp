@@ -192,8 +192,6 @@ export const postsRouter = createTRPCRouter({
         data: { content, authorId: user },
       });
 
-      // void ctx.revalidateSSG?.(`/profiles/${ctx.userId}`);
-
       return post;
     }),
   toggleLike: privateProcedure

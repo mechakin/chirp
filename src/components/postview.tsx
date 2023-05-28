@@ -5,6 +5,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { VscHeart, VscHeartFilled } from "react-icons/vsc";
+import toast from "react-hot-toast";
 
 dayjs.extend(relativeTime);
 
@@ -16,6 +17,14 @@ export function PostView(props: PostWithUser) {
     onSuccess: async () => {
       await trpcUtils.posts.infiniteFeed.invalidate();
       await trpcUtils.posts.infiniteProfileFeed.invalidate();
+    },
+    onError: (event) => {
+      const errorMessage = event.data?.zodError?.fieldErrors.content;
+      if (errorMessage && errorMessage[0]) {
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Failed to follow! Please try again later.");
+      }
     },
   });
 

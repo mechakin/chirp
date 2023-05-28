@@ -47,7 +47,6 @@ model Post {
 
 model User {
     id        String @id
-    bio       String @default("") @db.VarChar(1000)
     followers User[] @relation(name: "Followers")
     follows   User[] @relation(name: "Followers")
     posts     Post[]
