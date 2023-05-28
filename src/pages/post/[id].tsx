@@ -4,11 +4,35 @@ import { api } from "~/utils/api";
 import { PageLayout } from "~/components/layout";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { PostView } from "~/components/postview";
+import { IconHoverEffect } from "~/components/iconhovereffect";
+import { VscArrowLeft } from "react-icons/vsc";
+import Link from "next/link";
+import { NotFound } from "~/components/notfound";
 
 const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
   const { data } = api.posts.getById.useQuery({ id });
 
-  if (!data) return <div>404</div>;
+  if (!data) return <NotFound />;
+
+  function Header() {
+    const handleJumpUpClick = () => {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    };
+
+    return (
+      <header
+        className="flex w-full cursor-pointer bg-black p-2"
+        onClick={handleJumpUpClick}
+      >
+        <Link href=".." className="mr-2">
+          <IconHoverEffect>
+            <VscArrowLeft className="h-6 w-6" />
+          </IconHoverEffect>
+        </Link>
+        <p className="py-2">Post</p>
+      </header>
+    );
+  }
 
   return (
     <>
@@ -16,6 +40,7 @@ const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
         <title>{`${data.post.content} - ${data.author.username}`}</title>
       </Head>
       <PageLayout>
+        <Header></Header>
         <PostView {...data} />
       </PageLayout>
     </>

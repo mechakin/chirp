@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { VscHeart, VscHeartFilled } from "react-icons/vsc";
 import toast from "react-hot-toast";
+import { useRouter } from "next/router";
 
 dayjs.extend(relativeTime);
 
@@ -13,6 +14,7 @@ type PostWithUser = RouterOutputs["posts"]["infiniteFeed"]["posts"][number];
 
 export function PostView(props: PostWithUser) {
   const trpcUtils = api.useContext();
+  const router = useRouter();
   const toggleLike = api.posts.toggleLike.useMutation({
     onSuccess: async () => {
       await trpcUtils.posts.infiniteFeed.invalidate();
@@ -30,13 +32,31 @@ export function PostView(props: PostWithUser) {
 
   const { post, author } = props;
 
-  function handleToggleLike() {
+  function handleToggleLike(event: React.MouseEvent) {
+    event.stopPropagation();
     toggleLike.mutate({ id: post.id });
   }
 
+  function handleOuterLink(event: React.MouseEvent) {
+    event.preventDefault();
+    void router.push(`/post/${post.id}`);
+  }
+
+  function handleInnerLink(event: React.MouseEvent) {
+    event.stopPropagation();
+  }
+
   return (
-    <div key={post.id} className="flex gap-3 border-b border-slate-400 p-4">
-      <Link href={`/@${author.username}`}>
+    <div
+      key={post.id}
+      className="relative flex cursor-pointer gap-3 border-b border-slate-400 p-4"
+      onClick={handleOuterLink}
+    >
+      <Link
+        href={`/@${author.username}`}
+        onClick={handleInnerLink}
+        className="h-14"
+      >
         <Image
           src={author.profileImageUrl}
           alt={`@${author.username}'s profile picture`}
@@ -45,15 +65,19 @@ export function PostView(props: PostWithUser) {
           height={56}
         />
       </Link>
-
       <div className="flex flex-col">
         <div className="flex gap-1 text-slate-300">
           <span>
-            <Link href={`/@${author.username}`}>
-              <span>{`@${author.username}`}</span>
+            <Link
+              href={`/@${author.username}`}
+              className="z-10"
+              onClick={handleInnerLink}
+            >
+              <span className="z-10 hover:underline">{`@${author.username}`}</span>
             </Link>
+            {"  ·  "}
             <Link href={`/post/${post.id}`}>
-              <span className="font-thin">{` · ${dayjs(
+              <span className="font-thin hover:underline">{`${dayjs(
                 post.createdAt
               ).fromNow()}`}</span>
             </Link>
@@ -72,7 +96,7 @@ export function PostView(props: PostWithUser) {
 }
 
 type HeartButtonProps = {
-  onClick: () => void;
+  onClick: (event: React.MouseEvent) => void;
   isLoading: boolean;
   likedByMe: boolean;
   likeCount: number;
@@ -89,7 +113,9 @@ function HeartButton({
 
   if (!isSignedIn) {
     return (
-      <div className={`mb-1 mt-1 flex items-center gap-3 self-start text-gray-500`}>
+      <div
+        className={`z-10 mb-1 mt-1 flex items-center gap-3 self-start text-gray-500`}
+      >
         <HeartIcon />
         <span>{likeCount}</span>
       </div>
@@ -103,7 +129,7 @@ function HeartButton({
       className={`group flex items-center gap-1 self-start pt-2 transition-colors duration-200 ${
         likedByMe
           ? "text-red-500"
-          : "text-gray-500 hover:text-red-500 focus-visible:text-red-500" 
+          : "text-gray-500 hover:text-red-500 focus-visible:text-red-500"
       }`}
     >
       <div className="p-1">
