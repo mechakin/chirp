@@ -10,7 +10,7 @@ export function SideNav() {
 
   return (
     <nav className="sticky top-0">
-      <ul className="flex min-h-screen flex-col items-start gap-2 whitespace-nowrap p-4">
+      <ul className="flex min-h-screen flex-col items-start gap-2 whitespace-nowrap py-2 px-4">
         <li>
           <Link href="/">
             <IconHoverEffect>

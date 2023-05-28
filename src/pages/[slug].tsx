@@ -29,8 +29,20 @@ function ProfileHeader(props: {
 
   const { mutate, isLoading: isPosting } = api.profile.toggleFollow.useMutation(
     {
-      onSuccess: () => {
-        void ctx.profile.getUserByUsername.invalidate();
+      onSuccess: ({ addedFollow }) => {
+        ctx.profile.getUserByUsername.setData(
+          { username: props.username },
+          (oldData) => {
+            if (oldData == null) return;
+
+            const countModifier = addedFollow ? 1 : -1;
+            return {
+              ...oldData,
+              isFollowing: addedFollow,
+              followersCount: oldData.followersCount + countModifier,
+            };
+          }
+        );
       },
       onError: (event) => {
         const errorMessage = event.data?.zodError?.fieldErrors.content;
@@ -68,6 +80,7 @@ function ProfileHeader(props: {
           className={`mr-2 rounded-full border border-slate-400 p-2 px-4 ${
             props.isFollowing ? "bg-transparent" : "bg-slate-600"
           }`}
+          disabled={isPosting}
           onClick={() => mutate({ username: props.username })}
         >
           {props.isFollowing ? "Following" : "Follow"}
@@ -108,8 +121,8 @@ export const ProfileFeed = (props: { userId: string }) => {
       <span ref={ref} className={hasNextPage ? "invisible" : "hidden"}>
         intersection observer marker
       </span>
-      {isFetching && (
-        <div className="-mt-6 pb-2">
+      {isLoading && (
+        <div className="pb-2">
           <LoadingPage />
         </div>
       )}

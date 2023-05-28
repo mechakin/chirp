@@ -25,11 +25,16 @@ export const profileRouter = createTRPCRouter({
 
       const filteredUser = filterUserForClient(user);
 
+      const currentUserId = ctx.userId;
+
       const profile = await ctx.prisma.user.findUnique({
         where: { id: user.id },
         select: {
           _count: { select: { followers: true, follows: true, posts: true } },
-          followers: user.id == null ? undefined : { where: { id: user.id } },
+          followers:
+            currentUserId == null
+              ? undefined
+              : { where: { id: currentUserId } },
         },
       });
 
@@ -93,9 +98,6 @@ export const profileRouter = createTRPCRouter({
         });
         addedFollow = false;
       }
-
-      // void ctx.revalidateSSG?.(`/profiles/${userId}`);
-      // void ctx.revalidateSSG?.(`/profiles/${currentUserId}`);
 
       return { addedFollow };
     }),
