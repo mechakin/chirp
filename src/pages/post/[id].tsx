@@ -21,7 +21,7 @@ const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
 
     return (
       <header
-        className="flex w-full cursor-pointer bg-black p-2"
+        className="sticky top-0 z-10 flex items-center  bg-black p-[0.625rem]"
         onClick={handleJumpUpClick}
       >
         <Link href=".." className="mr-2">
@@ -40,7 +40,7 @@ const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
         <title>{`${data.post.content} - ${data.author.username}`}</title>
       </Head>
       <PageLayout>
-        <Header></Header>
+        <Header />
         <PostView {...data} />
       </PageLayout>
     </>

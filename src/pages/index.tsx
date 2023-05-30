@@ -164,7 +164,7 @@ function Header() {
 
   return (
     <header
-      className="w-full cursor-pointer bg-black p-4 py-[1.125rem]"
+      className="w-full cursor-pointer bg-black p-[1.125rem]"
       onClick={handleJumpUpClick}
     >
       <p className="">Home</p>
