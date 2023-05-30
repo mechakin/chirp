@@ -13,11 +13,7 @@ import { VscArrowLeft } from "react-icons/vsc";
 import { useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import { NotFound } from "~/components/notfound";
-
-const pluralRules = new Intl.PluralRules();
-function getPlural(number: number, singular: string, plural: string) {
-  return pluralRules.select(number) === "one" ? singular : plural;
-}
+import { getPlural } from "~/lib/utils";
 
 function ProfileHeader(props: {
   username: string;
@@ -91,13 +87,13 @@ function ProfileHeader(props: {
   );
 }
 
-export const ProfileFeed = (props: { userId: string }) => {
+export const ProfileFeed = (props: { username: string }) => {
   const { ref, inView } = useInView();
 
   const { data, isLoading, hasNextPage, fetchNextPage, isFetching } =
     api.posts.infiniteProfileFeed.useInfiniteQuery(
       {
-        userId: props.userId,
+        username: props.username,
       },
       { getNextPageParam: (lastpage) => lastpage.nextCursor }
     );
@@ -163,18 +159,24 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
           data.username ?? ""
         }`}</div>
         <div className="flex w-full border-b border-slate-400 pl-4 pb-4">
-          <p className="pr-4">
+          <Link
+            href={`/@${username}/following`}
+            className="pr-4 hover:underline"
+          >
             {data.followsCount}{" "}
             <span className="font-thin text-slate-300">Following</span>
-          </p>
-          <p className="pb-2">
+          </Link>
+          <Link
+            href={`/@${username}/followers`}
+            className="pb-2 hover:underline"
+          >
             {data.followersCount}{" "}
             <span className="font-thin text-slate-300">
               {getPlural(data.followersCount, "Follower", "Followers")}
             </span>
-          </p>
+          </Link>
         </div>
-        <ProfileFeed userId={data.id} />
+        <ProfileFeed username={username} />
       </PageLayout>
     </>
   );
@@ -191,6 +193,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const username = slug.replace("@", "");
 
   await ssg.profile.getUserByUsername.prefetch({ username });
+  await ssg.posts.infiniteProfileFeed.prefetchInfinite({ username });
 
   return {
     props: {

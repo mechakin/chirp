@@ -4,24 +4,14 @@ import { TRPCError } from "@trpc/server";
 import { type inferAsyncReturnType } from "@trpc/server";
 import { z } from "zod";
 import { type Prisma } from "@prisma/client";
-
+import { ratelimit } from "~/server/helpers/rateLimiter";
 import {
   createTRPCRouter,
   privateProcedure,
   publicProcedure,
   type createTRPCContext,
 } from "~/server/api/trpc";
-
-import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
-
-// Create a new ratelimiter, that allows 1 request per 1 second
-const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(1, "1 s"),
-  analytics: true,
-  prefix: "@upstash/ratelimit",
-});
+import { checkAuthor } from "~/server/helpers/checkAuthor";
 
 type Post = {
   id: string;
@@ -116,38 +106,32 @@ async function getInfinitePosts({
   };
 }
 
-async function checkAuthor(
-  ctx: inferAsyncReturnType<typeof createTRPCContext>,
-  userId: string
-) {
-  const author = await ctx.prisma.user.findUnique({
-    where: { id: userId },
-  });
-
-  if (author) return;
-
-  await ctx.prisma.user.create({
-    data: { id: userId },
-  });
-
-  return;
-}
-
 export const postsRouter = createTRPCRouter({
   infiniteProfileFeed: publicProcedure
     .input(
       z.object({
-        userId: z.string(),
+        username: z.string(),
         limit: z.number().optional(),
         cursor: z.object({ id: z.string(), createdAt: z.date() }).optional(),
       })
     )
-    .query(async ({ input: { limit = 20, userId, cursor }, ctx }) => {
+    .query(async ({ input: { limit = 20, username, cursor }, ctx }) => {
+      const [user] = await clerkClient.users.getUserList({
+        username: [username],
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "User not found.",
+        });
+      }
+
       return await getInfinitePosts({
         limit,
         ctx,
         cursor,
-        whereClause: { authorId: userId },
+        whereClause: { authorId: user.id },
       });
     }),
   infiniteFeed: publicProcedure
@@ -197,6 +181,10 @@ export const postsRouter = createTRPCRouter({
   toggleLike: privateProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input: { id } }) => {
+      const user = ctx.userId;
+
+      await checkAuthor(ctx, user);
+
       const data = { postId: id, authorId: ctx.userId };
 
       const { success } = await ratelimit.limit(ctx.userId);

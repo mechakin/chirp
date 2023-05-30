@@ -114,7 +114,7 @@ function HeartButton({
   if (!isSignedIn) {
     return (
       <div
-        className={`z-10 mb-1 mt-1 flex items-center gap-3 self-start text-gray-500`}
+        className={`z-10 mt-2 flex items-center gap-3 self-start text-gray-500`}
       >
         <HeartIcon />
         <span>{likeCount}</span>
