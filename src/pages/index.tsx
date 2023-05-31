@@ -14,7 +14,6 @@ const TABS = ["Recent", "Following"] as const;
 function CreatePostWizard() {
   const { user } = useUser();
 
-  // use react hook form instead of this
   const [input, setInput] = useState("");
 
   const ctx = api.useContext();
@@ -174,6 +173,7 @@ function Header() {
 
 const Home: NextPage = () => {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
+
   const [selectedTab, setSelectedTab] =
     useState<(typeof TABS)[number]>("Recent");
 

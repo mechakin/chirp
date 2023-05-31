@@ -8,11 +8,19 @@ import { IconHoverEffect } from "~/components/iconhovereffect";
 import { VscArrowLeft } from "react-icons/vsc";
 import Link from "next/link";
 import { NotFound } from "~/components/notfound";
+import { useRouter } from "next/router";
 
 const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
+  const router = useRouter();
+
   const { data } = api.posts.getById.useQuery({ id });
 
   if (!data) return <NotFound />;
+
+  function backToPreviousPage(event: React.MouseEvent) {
+    event.preventDefault();
+    router.back();
+  }
 
   function Header() {
     const handleJumpUpClick = () => {
@@ -24,7 +32,7 @@ const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
         className="sticky top-0 z-10 flex items-center  bg-black p-[0.625rem]"
         onClick={handleJumpUpClick}
       >
-        <Link href=".." className="mr-2">
+        <Link href={"#"} onClick={backToPreviousPage} className="mr-2">
           <IconHoverEffect>
             <VscArrowLeft className="h-6 w-6" />
           </IconHoverEffect>

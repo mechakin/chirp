@@ -17,7 +17,7 @@ function FollowerHeader(props: { username: string }) {
 
   return (
     <header className="sticky top-0 z-10 flex items-center  bg-black p-[0.625rem]">
-      <Link href=".." className="mr-2">
+      <Link href={`/@${props.username}`} className="mr-2">
         <IconHoverEffect>
           <VscArrowLeft className="h-6 w-6" />
         </IconHoverEffect>

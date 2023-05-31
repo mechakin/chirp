@@ -11,8 +11,9 @@ import { useRouter } from "next/router";
 dayjs.extend(relativeTime);
 
 type PostWithUser = RouterOutputs["posts"]["infiniteFeed"]["posts"][number];
+type LikeWithUser = RouterOutputs["posts"]["infiniteLikeFeed"]["posts"][number];
 
-export function PostView(props: PostWithUser) {
+export function PostView(props: PostWithUser | LikeWithUser) {
   const trpcUtils = api.useContext();
   const router = useRouter();
   const toggleLike = api.posts.toggleLike.useMutation({

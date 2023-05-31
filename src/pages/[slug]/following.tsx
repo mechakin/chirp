@@ -17,7 +17,7 @@ function FollowingHeader(props: { username: string }) {
 
   return (
     <header className="flex w-full cursor-pointer items-center bg-black p-[0.625rem]">
-      <Link href=".." className="mr-2">
+      <Link href={`/@${props.username}`} className="mr-2">
         <IconHoverEffect>
           <VscArrowLeft className="h-6 w-6" />
         </IconHoverEffect>
