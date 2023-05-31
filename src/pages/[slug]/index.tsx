@@ -14,6 +14,9 @@ import { useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import { NotFound } from "~/components/notfound";
 import { getPlural } from "~/lib/utils";
+import { useState } from "react";
+
+const TABS = ["Posts", "Likes"] as const;
 
 function ProfileHeader(props: {
   username: string;
@@ -127,10 +130,53 @@ export const ProfileFeed = (props: { username: string }) => {
   );
 };
 
+export const LikeFeed = (props: { username: string }) => {
+  const { ref, inView } = useInView();
+
+  const { data, isLoading, hasNextPage, isFetching, fetchNextPage } =
+    api.posts.infiniteLikeFeed.useInfiniteQuery(
+      { username: props.username },
+      {
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      }
+    );
+
+  const posts = data?.pages.flatMap((post) => post.posts);
+
+  if (isLoading) return <LoadingPage />;
+
+  if (!data || (posts && posts.length === 0))
+    return <div className="p-4">User has not liked a post.</div>;
+
+  if (inView && hasNextPage && !isFetching) {
+    void fetchNextPage();
+  }
+
+  return (
+    <div className="flex flex-col">
+      {posts &&
+        posts.map((fullPost) => (
+          <PostView {...fullPost} key={fullPost?.post.id} />
+        ))}
+      <span ref={ref} className={hasNextPage ? "invisible" : "hidden"}>
+        intersection observer marker
+      </span>
+      {isLoading && (
+        <div className="pb-2">
+          <LoadingPage />
+        </div>
+      )}
+    </div>
+  );
+};
+
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   const { data } = api.profile.getUserByUsername.useQuery({
     username,
   });
+
+  const [selectedTab, setSelectedTab] =
+    useState<(typeof TABS)[number]>("Posts");
 
   if (!data) return <NotFound />;
 
@@ -158,7 +204,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
         <div className="p-4 text-2xl font-medium">{`@${
           data.username ?? ""
         }`}</div>
-        <div className="flex w-full border-b border-slate-400 pl-4 pb-4">
+        <div className="flex w-full  pl-4 pb-2">
           <Link
             href={`/@${username}/following`}
             className="pr-4 hover:underline"
@@ -176,7 +222,27 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
             </span>
           </Link>
         </div>
-        <ProfileFeed username={username} />
+
+        <div className="flex bg-black">
+          {TABS.map((tab) => {
+            return (
+              <button
+                key={tab}
+                className={`flex-grow bg-black p-2 hover:bg-slate-700 focus-visible:bg-slate-700 ${
+                  tab === selectedTab ? "border-b-4 border-b-slate-500" : ""
+                }`}
+                onClick={() => setSelectedTab(tab)}
+              >
+                {tab}
+              </button>
+            );
+          })}
+        </div>
+        {selectedTab === "Posts" ? (
+          <ProfileFeed username={username} />
+        ) : (
+          <LikeFeed username={username} />
+        )}
       </PageLayout>
     </>
   );
@@ -193,7 +259,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const username = slug.replace("@", "");
 
   await ssg.profile.getUserByUsername.prefetch({ username });
-  await ssg.posts.infiniteProfileFeed.prefetchInfinite({ username });
 
   return {
     props: {

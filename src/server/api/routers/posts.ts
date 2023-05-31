@@ -161,6 +161,35 @@ export const postsRouter = createTRPCRouter({
         });
       }
     ),
+  infiniteLikeFeed: publicProcedure
+    .input(
+      z.object({
+        username: z.string(),
+        limit: z.number().optional(),
+        cursor: z.object({ id: z.string(), createdAt: z.date() }).optional(),
+      })
+    )
+    .query(async ({ ctx, input: { limit = 20, username, cursor } }) => {
+      const [user] = await clerkClient.users.getUserList({
+        username: [username],
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "User not found.",
+        });
+      }
+
+      return await getInfinitePosts({
+        limit,
+        ctx,
+        cursor,
+        whereClause: {
+          likes: { some: { authorId: { equals: user.id } } },
+        },
+      });
+    }),
   create: privateProcedure
     .input(
       z.object({
