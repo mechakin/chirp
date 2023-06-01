@@ -5,7 +5,7 @@ import { PageLayout } from "~/components/layout";
 import { LoadingPage } from "~/components/loading";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import Link from "next/link";
-import { IconHoverEffect } from "~/components/IconHoverEffect";
+import { IconHoverEffect } from "~/components/iconHoverEffect";
 import { VscArrowLeft } from "react-icons/vsc";
 import { NotFound } from "~/components/notfound";
 import { FollowView } from "~/components/followview";
