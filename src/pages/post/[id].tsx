@@ -4,7 +4,7 @@ import { api } from "~/utils/api";
 import { PageLayout } from "~/components/layout";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { PostView } from "~/components/postview";
-import { IconHoverEffect } from "~/components/IconHoverEffect";
+import { IconHoverEffect } from "~/components/iconHoverEffect";
 import { VscArrowLeft } from "react-icons/vsc";
 import Link from "next/link";
 import { NotFound } from "~/components/notfound";
