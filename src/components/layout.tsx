@@ -40,7 +40,7 @@ export function SideNav() {
                 <IconHoverEffect>
                   <span className="flex items-center gap-4">
                     <VscSignIn className="h-8 w-8 " />
-                    <span className="hidden text-lg  md:inline">Log In</span>
+                    <span className="hidden text-lg md:inline">Log In</span>
                   </span>
                 </IconHoverEffect>
               </button>
