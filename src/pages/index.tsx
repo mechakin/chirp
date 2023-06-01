@@ -90,7 +90,7 @@ function RecentFeed() {
 
   if (postsLoading) return <LoadingPage />;
 
-  if (!data) return <div>Something went wrong!</div>;
+  if (!data) return <div className="p-[1.125rem]">Something went wrong!</div>;
 
   if (inView && hasNextPage && !isFetching) {
     void fetchNextPage();

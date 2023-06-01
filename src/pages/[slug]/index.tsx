@@ -30,6 +30,8 @@ function ProfileHeader(props: {
   const { mutate, isLoading: isPosting } = api.profile.toggleFollow.useMutation(
     {
       onSuccess: ({ addedFollow }) => {
+        void ctx.profile.getUserByUsername.invalidate();
+
         ctx.profile.getUserByUsername.setData(
           { username: props.username },
           (oldData) => {
