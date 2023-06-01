@@ -8,7 +8,7 @@ import { PostView } from "~/components/postview";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { useInView } from "react-intersection-observer";
 import Link from "next/link";
-import { IconHoverEffect } from "~/components/iconhovereffect";
+import { IconHoverEffect } from "~/components/IconHoverEffect";
 import { VscArrowLeft } from "react-icons/vsc";
 import { useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
